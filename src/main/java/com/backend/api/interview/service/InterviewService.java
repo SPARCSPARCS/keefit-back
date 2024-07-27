@@ -22,7 +22,8 @@ public class InterviewService {
     private final InterviewRepository interviewRepository;
 
     @Transactional
-    public Interview createInterview(InterviewRequest request) throws Exception {
+    public Interview createInterview(InterviewRequest request, String fileName) throws Exception {
+        // FileName 저장 로직 등 추가
 
         List<String> generatedQuestions = generateQuestions(request);
 
@@ -30,6 +31,7 @@ public class InterviewService {
                 .company(request.getCompanyName())
                 .field(request.getField())
                 .questions(generatedQuestions)
+                .fileName(fileName) // 파일 이름 저장
                 .build();
 
         return interviewRepository.save(interview);

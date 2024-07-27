@@ -19,7 +19,9 @@ public class Interview {
 
     private String company;
 
-    private String field;
+    private String field; // 직무
+
+    private String fileName;  // 자소서 파일명
 
     @ElementCollection
     private List<String> questions;
