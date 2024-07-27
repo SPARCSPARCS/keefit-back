@@ -4,3 +4,8 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+naver :
+  clova :
+    clientid : qcnn4iu5bv
+    secretkey : pYjZIvWtJtS7TuFo7tEBSP5ACGeywlyWK2r4k89C
