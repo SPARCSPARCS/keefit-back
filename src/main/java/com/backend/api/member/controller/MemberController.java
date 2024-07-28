@@ -12,21 +12,23 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class MemberController {
     private final MemberService memberService;
 
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<Member> signup(
             @Valid @RequestBody MemberRequest memberRequestDTO) throws Exception {
         return new ResponseEntity<>(memberService.signup(memberRequestDTO), HttpStatus.OK);
     }
 
+    // 로그인
     @PostMapping(value = "/login")
     public ResponseEntity<MemberResponse> login(@RequestBody MemberRequest request) throws Exception {
         return new ResponseEntity<>(memberService.login(request), HttpStatus.OK);
     }
 
+    // 사용자 토큰 인증
     @GetMapping("/user/get")
     public ResponseEntity<Member> getUser(@RequestHeader("Authorization") String authorizationHeader) {
         try {
@@ -44,4 +46,11 @@ public class MemberController {
         }
     }
 
+    // 마이페이지 정보 1 - 사용자 유형 조회
+    @GetMapping("")
+    public int getTravelList(@RequestParam(required = true) String serviceId) throws Exception {
+        int userType = memberService.getMemeberInfo(serviceId);
+
+        return userType;
+    }
 }

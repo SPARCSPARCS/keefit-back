@@ -66,11 +66,19 @@ public class MemberService {
             throw new Exception("유효하지 않은 토큰입니다.");
         }
 
-        String username = jwtProvider.getAccount(token);
+        String username = jwtProvider.getServiceId(token);
 
         // 사용자 정보 조회
-
         return memberRepository.findByUsername(username)
                 .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public int getMemeberInfo(String serviceId) throws Exception {
+        Member member = memberRepository.findByUsername(serviceId)
+                .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+
+        // 사용자 정보 조회
+        return member.getUserType();
     }
 }

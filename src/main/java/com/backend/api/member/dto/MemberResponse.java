@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class MemberResponse {
     private Long id;
     private String username;
-
     private String token;
 
     public MemberResponse(Member member) {
