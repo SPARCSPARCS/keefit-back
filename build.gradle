@@ -26,6 +26,9 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Apache Tika
 	implementation 'org.apache.tika:tika-core:2.7.0'
@@ -35,12 +38,25 @@ dependencies {
 	implementation 'org.apache.poi:poi:5.2.3'
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'
 
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-config'
+
+
 	// Apache HttpClient
 	implementation 'org.apache.httpcomponents:httpclient:4.5.14' // 최신 버전을 확인하여 사용하세요
 	// Apache HttpCore (필요 시)
 	implementation 'org.apache.httpcomponents:httpcore:4.4.16' // 최신 버전을 확인하여 사용하세요
 	// Apache HttpMime
 	implementation 'org.apache.httpcomponents:httpmime:4.5.14' // 최신 버전으로 설정하세요
+
+	// JWT 관련
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

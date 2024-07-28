@@ -3,11 +3,13 @@ package com.backend.api.interview.service;
 import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
-import lombok.RequiredArgsConstructor;
+import com.backend.api.utils.FileContentReader;
+import lombok.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -27,12 +29,28 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class InterviewService {
 
     private final InterviewRepository interviewRepository;
+    private final FileContentReader fileContentReader = new FileContentReader();
     private static final String CLOVA_API_URL = "https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize";
 
     @Value("${naver.clova.clientid}")
@@ -42,6 +60,7 @@ public class InterviewService {
     private String SECRETKEY;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Tika tika = new Tika();
 
     @Transactional
     public Interview createInterview(InterviewRequest request, String fileName) throws Exception {
@@ -59,10 +78,8 @@ public class InterviewService {
 
     public List<String> generateQuestions(InterviewRequest request, String fileName) throws IOException {
         Path filePath = Paths.get("uploads/", fileName); // 파일 경로
-        byte[] fileContent = Files.readAllBytes(filePath);
+        String fileContent = fileContentReader.readFileContentAsText(filePath);
         String summary = summarizeText(fileContent);
-
-        // TO-DO : request로 받은 사전질문으로 질문 생성
 
         // 자소서 요약내용으로 질문 생성
         List<String> questions = new ArrayList<>();
@@ -70,16 +87,17 @@ public class InterviewService {
         return questions;
     }
 
-    public String summarizeText(byte[] fileContent) throws IOException {
+    public String summarizeText(String content) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_API_URL);
             httpPost.setHeader("X-NCP-APIGW-API-KEY-ID", CLIENTID);
             httpPost.setHeader("X-NCP-APIGW-API-KEY", SECRETKEY);
+            httpPost.setHeader("Content-Type", "application/json");
 
-            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            builder.addBinaryBody("file", new ByteArrayInputStream(fileContent), ContentType.APPLICATION_OCTET_STREAM, "document");
-            HttpEntity multipart = builder.build();
-            httpPost.setEntity(multipart);
+            // Create JSON body
+            String jsonBody = createJsonBody(content);
+            HttpEntity stringEntity = new StringEntity(jsonBody, ContentType.APPLICATION_JSON);
+            httpPost.setEntity(stringEntity);
 
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                 HttpEntity responseEntity = response.getEntity();
@@ -87,6 +105,13 @@ public class InterviewService {
                 return extractSummaryFromResponse(responseBody);
             }
         }
+    }
+
+    private String createJsonBody(String content) throws IOException {
+        Document document = new Document(content);
+        Option option = new Option("ko", "news", 2, 1);
+        RequestBody requestBody = new RequestBody(document, option);
+        return objectMapper.writeValueAsString(requestBody);
     }
 
     private String extractSummaryFromResponse(String responseBody) {
@@ -97,5 +122,33 @@ public class InterviewService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse response JSON", e);
         }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class Document {
+        private String content;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class Option {
+        private String language;
+        private String model;
+        private int tone;
+        private int summaryCount;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class RequestBody {
+        private Document document;
+        private Option option;
     }
 }

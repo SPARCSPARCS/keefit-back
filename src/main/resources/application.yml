@@ -1,9 +1,17 @@
-
 spring:
+  application:
+    name: api
   http:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+
+jwt:
+  header: Authorization
+  secret:
+    key: EIJXbcvMJcZRXQ8EhR4x5Cs3YVBd+B77wVnZv0U0Aac=
+    token-validity-in-seconds: 3600
 
 naver :
   clova :
