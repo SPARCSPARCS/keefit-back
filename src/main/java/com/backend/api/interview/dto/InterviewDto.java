@@ -15,6 +15,8 @@ public class InterviewDto {
 
     private String companyName;
 
+    private String serviceId; // 면접을 생성한 사용자 ID
+
     private List<String> questions;
 
     private List<String> answers;

@@ -16,6 +16,8 @@ public class InterviewResponse {
 
     private String companyName;
 
+    private String serviceId; // 사용자 아이디
+
     private String fileName;// 자소서 파일
 
     private String field; // 직무 정보
@@ -25,6 +27,7 @@ public class InterviewResponse {
     public InterviewResponse(Interview interview) {
         this.interviewId = interview.getInterviewId();
         this.companyName = interview.getCompany();
+        this.serviceId = interview.getMember().getUsername();
         this.fileName = interview.getFileName();
         this.field = interview.getField();
         this.questions = interview.getQuestions();

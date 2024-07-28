@@ -63,14 +63,14 @@ public class InterviewService {
     private final Tika tika = new Tika();
 
     @Transactional
-    public Interview createInterview(InterviewRequest request, String fileName) throws Exception {
-        List<String> generatedQuestions = generateQuestions(request, fileName);
+    public Interview createInterview(InterviewRequest request) throws Exception {
+//        List<String> generatedQuestions = generateQuestions(request);
 
         Interview interview = Interview.builder()
                 .company(request.getCompanyName())
                 .field(request.getField())
-                .questions(generatedQuestions)
-                .fileName(fileName) // 파일명 저장
+//                .questions(generatedQuestions)
+//                .member()
                 .build();
 
         return interviewRepository.save(interview);
