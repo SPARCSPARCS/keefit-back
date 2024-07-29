@@ -32,7 +32,7 @@ public class Member {
     @Builder.Default
     private List<Authority> roles = new ArrayList<>();
 
-    private int userType;
+    private int userType = 0;
 
     public void setRoles(List<Authority> role) {
         this.roles = role;

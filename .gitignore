@@ -1,4 +1,6 @@
 resources/application-secret.yml
+resources/application.yml
+
 src/main/resources/application-secret.yml
 
 HELP.md

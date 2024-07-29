@@ -6,14 +6,20 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-
 jwt:
   header: Authorization
   secret:
     key: EIJXbcvMJcZRXQ8EhR4x5Cs3YVBd+B77wVnZv0U0Aac=
-    token-validity-in-seconds: 3600
+    token-validity-in-seconds: 604800
 
-naver :
-  clova :
-    clientid : qcnn4iu5bv
-    secretkey : pYjZIvWtJtS7TuFo7tEBSP5ACGeywlyWK2r4k89C
+naver:
+  clova:
+    apiKey : NTA0MjU2MWZlZTcxNDJiY71zbl8q71f1sERnVRwzt+RZzWbe5i+VpjnKxSOpoXuV
+    apiGatewayKey : f2BmL2UpjJAx756MSQAJpXfO5wE2kcoPchgK8mfE
+    clientid: owkwud0ncz
+    secretkey: f2BmL2UpjJAx756MSQAJpXfO5wE2kcoPchgK8mfE
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework: DEBUG

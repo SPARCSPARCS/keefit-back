@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -28,7 +30,7 @@ public class MemberController {
         return new ResponseEntity<>(memberService.login(request), HttpStatus.OK);
     }
 
-    // 사용자 토큰 인증
+    // 사용자 토큰 인증 - test
     @GetMapping("/user/get")
     public ResponseEntity<Member> getUser(@RequestHeader("Authorization") String authorizationHeader) {
         try {
@@ -47,10 +49,22 @@ public class MemberController {
     }
 
     // 마이페이지 정보 1 - 사용자 유형 조회
-    @GetMapping("")
-    public int getTravelList(@RequestParam(required = true) String serviceId) throws Exception {
-        int userType = memberService.getMemeberInfo(serviceId);
+    @GetMapping("/mypage")
+    public ResponseEntity<Integer> getTravelList(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            // "Bearer " 접두사 제거
+            String token = authorizationHeader.startsWith("Bearer ")
+                    ? authorizationHeader.substring(7)
+                    : authorizationHeader;
 
-        return userType;
+            // JWT 토큰을 통해 사용자 정보를 확인
+            Member member = memberService.getMemberFromToken(token);
+
+            // 서비스 ID를 사용하여 사용자 유형을 조회
+            int userType = member.getUserType();
+            return new ResponseEntity<>(userType, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); // 토큰이 유효하지 않거나 오류가 발생한 경우
+        }
     }
 }

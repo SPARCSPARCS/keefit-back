@@ -11,6 +11,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(
+        name = "Company.findByCompanyName",
+        query = "SELECT c FROM Company c WHERE c.companyName = :companyName"
+)
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

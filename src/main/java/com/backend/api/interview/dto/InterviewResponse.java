@@ -27,7 +27,7 @@ public class InterviewResponse {
     public InterviewResponse(Interview interview) {
         this.interviewId = interview.getInterviewId();
         this.companyName = interview.getCompany();
-        this.serviceId = interview.getMember().getUsername();
+//        this.serviceId = interview.getMember().getUsername();
         this.fileName = interview.getFileName();
         this.field = interview.getField();
         this.questions = interview.getQuestions();
