@@ -11,7 +11,4 @@ public class MemberDto {
     private Long id;
 
     private String memberId;
-
-    private String memberType;
-
 }

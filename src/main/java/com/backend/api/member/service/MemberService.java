@@ -1,6 +1,7 @@
 package com.backend.api.member.service;
 
 
+import com.backend.api.member.dto.MemberDto;
 import com.backend.api.member.dto.MemberRequest;
 import com.backend.api.member.dto.MemberResponse;
 import com.backend.api.member.entity.Member;
@@ -36,7 +37,7 @@ public class MemberService {
         }
     }
 
-    public MemberResponse login(MemberRequest request) throws Exception {
+    public Member login(MemberRequest request) throws Exception {
         Member member = memberRepository.findByMemberId(request.getMemberId())
                 .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
 
@@ -48,7 +49,7 @@ public class MemberService {
 //            throw new Exception("사용자의 역할이 설정되지 않았습니다.");
 //        }
 
-        return MemberResponse.builder()
+        return Member.builder()
                 .id(member.getId())
                 .memberId(member.getMemberId())
 //                .token(jwtProvider.createToken(member.getUsername(), member.getRoles()))

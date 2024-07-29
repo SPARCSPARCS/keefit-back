@@ -1,5 +1,6 @@
 package com.backend.api.member.controller;
 
+import com.backend.api.member.dto.MemberDto;
 import jakarta.validation.Valid;
 import com.backend.api.member.dto.MemberRequest;
 import com.backend.api.member.dto.MemberResponse;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping
 public class MemberController {
     private final MemberService memberService;
 
@@ -26,9 +27,10 @@ public class MemberController {
 
     // 로그인
     @PostMapping(value = "/login")
-    public ResponseEntity<MemberResponse> login(@RequestBody MemberRequest request) throws Exception {
+    public ResponseEntity<Member> login(@RequestBody MemberRequest request) throws Exception {
         return new ResponseEntity<>(memberService.login(request), HttpStatus.OK);
     }
+
 
     // 사용자 토큰 인증 - test
 //    @GetMapping("/user/get")

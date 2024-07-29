@@ -1,17 +1,16 @@
 package com.backend.api.member.entity;
 
+import com.backend.api.MemberInfo.entity.MemberInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,8 +30,6 @@ public class Member {
 //    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    @Builder.Default
 //    private List<Authority> roles = new ArrayList<>();
-
-    private int userType = 0;
 //
 //    public void setRoles(List<Authority> role) {
 ////        this.roles = role;
