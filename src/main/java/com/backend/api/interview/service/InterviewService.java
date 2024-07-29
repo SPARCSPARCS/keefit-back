@@ -1,6 +1,6 @@
 package com.backend.api.interview.service;
 
-import com.backend.api.clova.ClovaService;
+//import com.backend.api.clova.ClovaService;
 import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
@@ -38,7 +38,8 @@ public class InterviewService {
 
     private final MemberRepository memberRepository;
     private final InterviewRepository interviewRepository;
-    private final ClovaService clovaService;
+//    private final ClovaService clovaService;
+
 //    private final FileContentReader fileContentReader = new FileContentReader();
 //    // clova 문서 요약 API
 //    private static final String CLOVA_API_URL = "https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize";
@@ -54,22 +55,22 @@ public class InterviewService {
     // 파일 read
 //    private final Tika tika = new Tika();
 
-    @Transactional
-    public Interview createInterview(String memberId, InterviewRequest request) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("member를 찾을 수 없습니다."));
-
-        List<String> generatedQuestions = clovaService.createInterviewByClova(request.getInfo(), request.getField());
-
-        Interview interview = Interview.builder()
-                .company(request.getCompanyName())
-                .field(request.getField())
-                .questions(generatedQuestions)
-                .member(member)
-                .build();
-
-        return interviewRepository.save(interview);
-    }
+//    @Transactional
+//    public Interview createInterview(String memberId, InterviewRequest request) throws Exception {
+//        Member member = memberRepository.findByMemberId(memberId)
+//                .orElseThrow(() -> new Exception("member를 찾을 수 없습니다."));
+//
+//        List<String> generatedQuestions = clovaService.createInterviewByClova(request.getInfo(), request.getField());
+//
+//        Interview interview = Interview.builder()
+//                .company(request.getCompanyName())
+//                .field(request.getField())
+//                .questions(generatedQuestions)
+//                .member(member)
+//                .build();
+//
+//        return interviewRepository.save(interview);
+//    }
     @Transactional
     public List<Interview> getInterviewList(String memberId) throws Exception {
         Member member = memberRepository.findByMemberId(memberId)
