@@ -19,10 +19,10 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long interviewId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "member_id")
-//    @JsonManagedReference // 무한 루프 방지를 위해 추가
-//    private Member member;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    @JsonManagedReference // 무한 루프 방지를 위해 추가
+    private Member member;
 
     private String company;
 
