@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class MemberDto {
 
-    private Long memberId;
+    private Long id;
 
-    private String serviceId;
+    private String memberId;
 
-    private String userType;
+    private String memberType;
 
 }

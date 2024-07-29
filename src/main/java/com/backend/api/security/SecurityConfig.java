@@ -21,9 +21,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtProvider jwtProvider;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+//    private final JwtProvider jwtProvider;
+//    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+//    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,11 +56,12 @@ public class SecurityConfig {
 //                        .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console, favicon.ico 요청 인증 무시
 //                        .requestMatchers("/favicon.ico").permitAll()
                                 .anyRequest().authenticated() // 그 외 인증 없이 접근X
-                ).exceptionHandling(exceptions -> {
-                    exceptions.authenticationEntryPoint(jwtAuthenticationEntryPoint);
-                    exceptions.accessDeniedHandler(jwtAccessDeniedHandler);
-                })
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);  // JwtFilter 추가
+                );
+//                .exceptionHandling(exceptions -> {
+//                    exceptions.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+//                    exceptions.accessDeniedHandler(jwtAccessDeniedHandler);
+//                });
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);  // JwtFilter 추가
 
         return httpSecurity.build();
     }

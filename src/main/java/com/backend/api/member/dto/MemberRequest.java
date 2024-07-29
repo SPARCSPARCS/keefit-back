@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class MemberRequest {
 
-    private Long memberId;
+    private Long id;
 
-    private String serviceId;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String servicePw;
+    private String memberId;
+//
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    private String servicePw;
 
 }

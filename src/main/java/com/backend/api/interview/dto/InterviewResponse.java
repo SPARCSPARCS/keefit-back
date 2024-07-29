@@ -18,7 +18,7 @@ public class InterviewResponse {
 
     private String serviceId; // 사용자 아이디
 
-    private String fileName;// 자소서 파일
+    private String fileName;// 자소서 파일명
 
     private String field; // 직무 정보
 

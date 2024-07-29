@@ -27,11 +27,19 @@ public class InterviewController {
 
     // 면접 질문 생성 요청
     @PostMapping("")
-    public ResponseEntity<InterviewResponse> createInterview(@RequestBody InterviewRequest request) {
+    public ResponseEntity<InterviewResponse> createInterview(
+            @RequestBody InterviewRequest request,
+            @RequestPart("file") MultipartFile file) {
         try {
             // 면접 생성
             Interview interview = interviewService.createInterview(request);
             InterviewResponse response = new InterviewResponse(interview);
+
+            // 자소서 파일
+            String fileName = file.getOriginalFilename();
+            saveFile(file);
+            // 자소서 파일 저장
+
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             // 예외 처리 및 로깅
@@ -40,35 +48,17 @@ public class InterviewController {
         }
     }
 
-        // 자소서 파일 업로드 부분
-        //        @RequestPart("request") InterviewRequest request,
-//        @RequestPart("file") MultipartFile file
-//        try {
-//            String fileName = file.getOriginalFilename();
-//            // 자소서 파일 저장
-//            saveFile(file);
-//
-//            // 면접 생성
-//            Interview interview = interviewService.createInterview(request, fileName);
-//            InterviewResponse response = new InterviewResponse(interview);
-//            return new ResponseEntity<>(response, HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            // 예외 처리 및 로깅
-//            System.out.println("Error creating interview: " + e.getMessage());
-//            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-//        }
+    private void saveFile(MultipartFile file) throws IOException {
+        // 자소서 파일 저장
+        Path uploadPath = Paths.get("uploads/");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        try (InputStream inputStream = file.getInputStream()) {
+            Path filePath = uploadPath.resolve(file.getOriginalFilename());
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new IOException("Could not save file: " + file.getOriginalFilename(), e);
+        }
     }
-//
-//    private void saveFile(MultipartFile file) throws IOException {
-//        // 자소서 파일 저장
-//        Path uploadPath = Paths.get("uploads/");
-//        if (!Files.exists(uploadPath)) {
-//            Files.createDirectories(uploadPath);
-//        }
-//        try (InputStream inputStream = file.getInputStream()) {
-//            Path filePath = uploadPath.resolve(file.getOriginalFilename());
-//            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-//        } catch (IOException e) {
-//            throw new IOException("Could not save file: " + file.getOriginalFilename(), e);
-//        }
-//    }
+}

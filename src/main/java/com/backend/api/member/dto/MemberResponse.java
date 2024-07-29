@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberResponse {
     private Long id;
-    private String username;
-    private String token;
+    private String memberId;
+//    private String token;
 
     public MemberResponse(Member member) {
         this.id = member.getId();
-        this.username = member.getUsername();
+        this.memberId = member.getMemberId();
     }
 
 }
