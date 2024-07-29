@@ -10,9 +10,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Configuration
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
-    List<Interview> findInterviewByMember(Member member);
+    List<Interview> findByMember(Member member);
+    Interview findByInterviewId(Long interviewId);
+    Optional<Interview> findByInterviewIdAndMember(Long interviewId, Member member);
 }

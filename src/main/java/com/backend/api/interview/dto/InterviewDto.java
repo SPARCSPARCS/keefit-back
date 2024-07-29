@@ -1,8 +1,9 @@
 package com.backend.api.interview.dto;
 
-import com.backend.api.company.dto.CompanyDto;
+import com.backend.api.interview.entity.Interview;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -15,7 +16,11 @@ public class InterviewDto {
 
     private String companyName;
 
-    private String serviceId; // 면접을 생성한 사용자 ID
+    private String memberId; // 면접을 생성한 사용자 ID
+
+    private Date createDate;
+
+    private String field;
 
     private List<String> questions;
 

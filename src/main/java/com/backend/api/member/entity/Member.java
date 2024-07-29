@@ -1,6 +1,7 @@
 package com.backend.api.member.entity;
 
 import com.backend.api.MemberInfo.entity.MemberInfo;
+import com.backend.api.interview.entity.Interview;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,9 +15,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Members")
+@Table(name = "Member")
 public class Member {
-    @JsonIgnore
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

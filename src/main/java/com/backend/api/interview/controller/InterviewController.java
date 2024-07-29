@@ -1,8 +1,7 @@
 package com.backend.api.interview.controller;
 
 import com.backend.api.MemberInfo.entity.MemberInfo;
-import com.backend.api.interview.dto.InterviewRequest;
-import com.backend.api.interview.dto.InterviewResponse;
+import com.backend.api.interview.dto.InterviewDto;
 import com.backend.api.interview.entity.Interview;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +62,24 @@ public class InterviewController {
 //            throw new IOException("Could not save file: " + file.getOriginalFilename(), e);
 //        }
 //    }
+    // 면접 저장
+    @PostMapping("{member_id}")
+    public String saveInterview(
+            @PathVariable("member_id") String memberId,
+            @RequestBody InterviewDto interviewDto) throws Exception {
+        return interviewService.saveInterview(memberId, interviewDto);
+    }
 
-    @PostMapping("{member_id}/interviewList")
+    // 면접 상세 조회
+    @GetMapping("{member_id}/{interview_id}")
+    public Interview getInterviewDetail(
+            @PathVariable("member_id") String memberId,
+            @PathVariable("interview_id") Long interview_id) throws Exception {
+        return interviewService.getInterview(interview_id);
+    }
+
+    // 면접 목록 조회
+    @GetMapping("{member_id}/list")
     public List<Interview> getInterviewList(
             @PathVariable("member_id") String memberId) throws Exception {
         return interviewService.getInterviewList(memberId);

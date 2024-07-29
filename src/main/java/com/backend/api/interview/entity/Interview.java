@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,8 @@ public class Interview {
     private Member member;
 
     private String company;
+
+    private Date createDate;
 
     private String field; // 직무
 
