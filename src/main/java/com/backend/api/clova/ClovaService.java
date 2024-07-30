@@ -57,9 +57,6 @@ public class ClovaService {
             HttpResponse feedbackResponse = httpClient.execute(httpPost);
             logContentType(feedbackResponse);
             String feedbackResponseBody = getResponseBody(feedbackResponse);
-            System.out.println("여기가 피드백" + feedbackResponseBody);
-
-            System.out.println("여기 피드백" + feedbackResponseBody);
 
             // 점수 요청
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
@@ -114,18 +111,18 @@ public class ClovaService {
     }
 
     private void setHeaders(HttpPost httpPost) {
-        httpPost.setHeader("X-NCP-CLOVASTUDIO-API-KEY", API_KEY);
-        httpPost.setHeader("X-NCP-APIGW-API-KEY", API_GATEWAY_KEY);
-        httpPost.setHeader("Content-Type", "application/json");
+        httpPost.addHeader("X-NCP-CLOVASTUDIO-API-KEY", API_KEY);
+        httpPost.addHeader("X-NCP-APIGW-API-KEY", API_GATEWAY_KEY);
+        httpPost.addHeader("Content-Type", "application/json");
     }
 
     private String createFeedbackPrompt() {
         return "너는 채용담당자야. \n" +
                 "면접 질문과 면접 답변을 보고 엄격한 평가를 진행해줘. \n" +
                 "\n" +
-                "평가방법 : \n" +
                 "면접자의 답변 각각에 대한 평가를 진행해. \n" +
-                "하나의 평가 결과는 하나의 배열 요소로 저장하여, 출력해.\n" +
+                "\n" +
+                "하나의 평가 결과는 하나의 배열 요소로 출력해.\n" +
                 "\n" +
                 "출력 예시 : [\"\", ] 와 같은 하나의 배열만 출력";
     }

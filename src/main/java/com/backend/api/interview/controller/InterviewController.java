@@ -1,10 +1,7 @@
 package com.backend.api.interview.controller;
 
 import com.backend.api.interview.dto.InterviewDto;
-import com.backend.api.interview.dto.InterviewFeedback;
 import com.backend.api.interview.entity.Interview;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.backend.api.interview.service.InterviewService;
 import org.springframework.web.multipart.MultipartFile;

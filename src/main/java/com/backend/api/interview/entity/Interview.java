@@ -1,6 +1,5 @@
 package com.backend.api.interview.entity;
 
-import com.backend.api.company.entity.Company;
 import com.backend.api.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

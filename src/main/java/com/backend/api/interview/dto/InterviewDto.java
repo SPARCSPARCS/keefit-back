@@ -1,6 +1,5 @@
 package com.backend.api.interview.dto;
 
-import com.backend.api.interview.entity.Interview;
 import lombok.*;
 
 import java.util.Date;
