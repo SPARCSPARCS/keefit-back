@@ -15,7 +15,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,67 +40,8 @@ public class ClovaService {
     private String API_GATEWAY_KEY;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public String interviewFeedbackByClova(InterviewDto interviewDto) {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
-            setHeaders(httpPost);
 
-            // 피드백 및 점수 평가 요청 본문 생성
-            String feedbackPrompt = createFeedbackPrompt();
-            String ratePrompt = createRatePrompt();
-            String feedbackRequestBody = createRequestBody(feedbackPrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
-            String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
-
-            // 피드백 요청
-            httpPost.setEntity(new StringEntity(feedbackRequestBody, ContentType.APPLICATION_JSON));
-            HttpResponse feedbackResponse = httpClient.execute(httpPost);
-            logContentType(feedbackResponse);
-            String feedbackResponseBody = getResponseBody(feedbackResponse);
-
-            // 점수 요청
-            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
-            HttpResponse rateResponse = httpClient.execute(httpPost);
-            logContentType(rateResponse);
-            String rateResponseBody = getResponseBody(rateResponse);
-
-            // 응답에서 점수 파싱
-            List<Integer> scores = parseScoresFromResponse(rateResponseBody);
-
-            // 점수 출력
-            System.out.println("Scores: " + scores);
-
-            return "성공";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-    private String sendRequest(CloseableHttpClient httpClient, String prompt, List<String> questions, List<String> answers) throws IOException {
-        HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
-        setHeaders(httpPost);
-
-        String requestBody = createRequestBody(prompt, questions, answers);
-
-        // 요청 본문 로깅
-        logger.info("Request body: " + requestBody);
-
-        StringEntity entity = new StringEntity(requestBody, "UTF-8");
-        entity.setContentType(ContentType.APPLICATION_JSON.getMimeType());
-        httpPost.setEntity(entity);
-
-        HttpResponse response = httpClient.execute(httpPost);
-
-        // 상태 코드 확인
-        int statusCode = response.getStatusLine().getStatusCode();
-        logger.info("Response status code: " + statusCode);
-
-        // 응답 본문 확인
-        String responseBody = getResponseBody(response);
-        logger.info("Response body: " + responseBody);
-
-        return responseBody;
-    }
-
+    // Clova API request body
     private String getResponseBody(HttpResponse response) throws IOException {
         HttpEntity entity = response.getEntity();
         if (entity != null) {
@@ -110,12 +50,14 @@ public class ClovaService {
         return "";
     }
 
+    // Clova API request header
     private void setHeaders(HttpPost httpPost) {
         httpPost.addHeader("X-NCP-CLOVASTUDIO-API-KEY", API_KEY);
         httpPost.addHeader("X-NCP-APIGW-API-KEY", API_GATEWAY_KEY);
         httpPost.addHeader("Content-Type", "application/json");
     }
 
+    // 면접 피드백 프롬프트
     private String createFeedbackPrompt() {
         return "너는 채용담당자야. \n" +
                 "면접 질문과 면접 답변을 보고 엄격한 평가를 진행해줘. \n" +
@@ -124,9 +66,10 @@ public class ClovaService {
                 "\n" +
                 "하나의 평가 결과는 하나의 배열 요소로 출력해.\n" +
                 "\n" +
-                "출력 예시 : [\"\", ] 와 같은 하나의 배열만 출력";
+                "출력 예시 : 하나의 배열만 출력";
     }
 
+    // 면접 평가 프롬프트
     private String createRatePrompt() {
         return "너는 채용담당자야. \n" +
                 "면접을 본 면접자에 대한 평가 점수를 책정해.\n" +
@@ -154,6 +97,7 @@ public class ClovaService {
                 "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
     }
 
+    // Clova API request body
     private String createRequestBody(String prompt, List<String> questions, List<String> answers) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String questionsJson = objectMapper.writeValueAsString(questions);
@@ -187,7 +131,8 @@ public class ClovaService {
         }
     }
 
-    private List<String> extractFeedbacksFromResponse(String responseBody) {
+    // Json에서 피드백 정보 추출
+    private List<String> parseFeedbackFromResponse(String responseBody) {
         List<String> feedbacks = new ArrayList<>();
         try {
             JsonNode rootNode = objectMapper.readTree(responseBody);
@@ -212,45 +157,7 @@ public class ClovaService {
     }
 
 
-    public InterviewFeedback getInterviewFeedbackAndScore(InterviewDto interviewDto) {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
-            setHeaders(httpPost);
-
-            // 피드백 및 점수 평가 요청 본문 생성
-            String feedbackPrompt = createFeedbackPrompt();
-            String ratePrompt = createRatePrompt();
-            String feedbackRequestBody = createRequestBody(feedbackPrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
-            String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
-
-            // 피드백 요청
-            httpPost.setEntity(new StringEntity(feedbackRequestBody, ContentType.APPLICATION_JSON));
-            HttpResponse feedbackResponse = httpClient.execute(httpPost);
-            logContentType(feedbackResponse);
-            String feedbackResponseBody = getResponseBody(feedbackResponse);
-
-            // 점수 요청
-            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
-            HttpResponse rateResponse = httpClient.execute(httpPost);
-            logContentType(rateResponse);
-            String rateResponseBody = getResponseBody(rateResponse);
-
-            // 응답에서 피드백과 점수 파싱
-            List<String> feedbacks = extractFeedbacksFromResponse(feedbackResponseBody);
-            System.out.println("이게 피드백!! " + feedbackResponseBody);
-            List<Integer> scores = parseScoresFromResponse(rateResponseBody);
-
-            return InterviewFeedback.builder()
-                    .feedbacks(feedbacks)
-                    .scores(scores)
-                    .build();
-        } catch (Exception e) {
-            logger.error("Error getting interview feedback and score", e);
-            throw new RuntimeException("Error getting interview feedback and score", e);
-        }
-    }
-
-
+    // Json에서 평가 점수 파싱
     private List<Integer> parseScoresFromResponse(String responseBody) {
         List<Integer> scores = new ArrayList<>();
         try {
@@ -274,4 +181,47 @@ public class ClovaService {
         }
         return scores;
     }
+
+    // 인터뷰 피드백, 평가 점수 요청 - Clova API
+    public InterviewFeedback getInterviewFeedbackAndScore(InterviewDto interviewDto) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
+            setHeaders(httpPost);
+
+            // 피드백 및 면접 점수 request - Clova API
+            String feedbackPrompt = createFeedbackPrompt();
+            String feedbackRequestBody = createRequestBody(feedbackPrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+            String ratePrompt = createRatePrompt();
+            String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+            // 피드백 요청 - Clova API
+            System.out.println("피드백 요청 : " + feedbackRequestBody);
+            httpPost.setEntity(new StringEntity(feedbackRequestBody, ContentType.APPLICATION_JSON));
+            HttpResponse feedbackResponse = httpClient.execute(httpPost);
+            logContentType(feedbackResponse);
+            String feedbackResponseBody = getResponseBody(feedbackResponse);
+
+            // 점수 요청 - Clova API
+            System.out.println("점수 요청 : " + rateRequestBody);
+            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
+            HttpResponse rateResponse = httpClient.execute(httpPost);
+            logContentType(rateResponse);
+            String rateResponseBody = getResponseBody(rateResponse);
+
+            // 응답에서 피드백, 점수 파싱
+            List<String> feedbacks = parseFeedbackFromResponse(feedbackResponseBody);
+            System.out.println("이게 피드백!! " + feedbackResponseBody);
+            List<Integer> scores = parseScoresFromResponse(rateResponseBody);
+
+            return InterviewFeedback.builder()
+                    .feedbacks(feedbacks)
+                    .scores(scores)
+                    .build();
+        } catch (Exception e) {
+            logger.error("Error getting interview feedback and score", e);
+            throw new RuntimeException("Error getting interview feedback and score", e);
+        }
+    }
+
 }
