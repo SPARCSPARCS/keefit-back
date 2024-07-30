@@ -26,5 +26,7 @@ public class InterviewDto {
 
     private List<String> answers;
 
-    private List<String> results; // 면접 피드백
+    private List<String> feedback; // 면접 피드백
+
+    private List<Integer> rate;
 }

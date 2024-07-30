@@ -16,6 +16,6 @@ import java.util.Optional;
 @Configuration
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
     List<Interview> findByMember(Member member);
-    Interview findByInterviewId(Long interviewId);
+    Optional<Interview> findByInterviewId(Long interviewId);
     Optional<Interview> findByInterviewIdAndMember(Long interviewId, Member member);
 }

@@ -34,10 +34,17 @@ public class Interview {
     private String fileName;  // 자소서 파일명
 
     @ElementCollection
+    @Column(length = 1000)  // 길이를 적절히 설정합니다
     private List<String> questions;
 
     @ElementCollection
+    @Column(length = 1000)  // 길이를 적절히 설정합니다
     private List<String> answers;
 
-    private String feedback;
+    @ElementCollection
+    @Column(length = 1000)  // 길이를 적절히 설정합니다
+    private List<String> feedback;
+
+    @ElementCollection
+    private List<Integer> rate;
 }

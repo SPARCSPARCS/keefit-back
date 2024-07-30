@@ -38,7 +38,7 @@ dependencies {
 	implementation 'org.apache.poi:poi:5.2.3'
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'
 
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-config'
 
 
@@ -48,6 +48,9 @@ dependencies {
 	implementation 'org.apache.httpcomponents:httpcore:4.4.16' // 최신 버전을 확인하여 사용하세요
 	// Apache HttpMime
 	implementation 'org.apache.httpcomponents:httpmime:4.5.14' // 최신 버전으로 설정하세요
+
+	// Json
+	implementation 'org.json:json:20211205'
 
 	// JWT 관련
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
