@@ -262,7 +262,6 @@ public class ClovaService {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
 
-
             String rateRequestBody = createRequestBody(prompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));

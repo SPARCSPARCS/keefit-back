@@ -1,6 +1,7 @@
 package com.backend.api.jobInterview.service;
 
 import com.backend.api.clova.ClovaService;
+import com.backend.api.interview.service.InterviewService;
 import com.backend.api.jobInterview.dto.JobInterviewDto;
 import com.backend.api.jobInterview.entity.JobInterview;
 import com.backend.api.jobInterview.repository.JobInterviewRepository;
@@ -34,6 +35,7 @@ public class JobInterviewService {
     private final JobInterviewRepository jobInterviewRepository;
     private final InterviewRepository interviewRepository;
     private final ClovaService clovaService;
+    private final InterviewService interviewService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired

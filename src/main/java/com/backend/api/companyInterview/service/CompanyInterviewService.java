@@ -41,6 +41,9 @@ public class CompanyInterviewService {
 
         List<Integer> feedbackAndScores = clovaService.getCompanyInterviewFeedback(interviewDto);
 
+
+//        clovaService.getJobInterviewScore(ratePrompt, interviewDto);
+
         // Create and save CompanyInterview entity
         CompanyInterview companyInterview = CompanyInterview.builder()
                 .questions(interviewDto.getQuestions())

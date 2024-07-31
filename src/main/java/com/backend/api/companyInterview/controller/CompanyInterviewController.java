@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/interview")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CompanyInterviewController {
     private final CompanyInterviewService companyInterviewService;
 

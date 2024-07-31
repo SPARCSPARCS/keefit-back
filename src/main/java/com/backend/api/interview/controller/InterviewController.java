@@ -7,7 +7,8 @@ import com.backend.api.interview.service.InterviewService;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/interview")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class InterviewController {
     private final InterviewService interviewService;
 
@@ -16,7 +17,7 @@ public class InterviewController {
     }
 
     // GET : 면접 상세
-    @GetMapping("/interview/{member_id}/{interview_id}")
+    @GetMapping("/{member_id}/{interview_id}")
     public Interview getInterviewDetail(
             @PathVariable("member_id") String memberId,
             @PathVariable("interview_id") Long interview_id) throws Exception {
@@ -24,7 +25,7 @@ public class InterviewController {
     }
 
     // GET : 면접 목록
-    @GetMapping("/interview/{member_id}/list")
+    @GetMapping("/{member_id}/list")
     public List<Interview> getInterviewList(
             @PathVariable("member_id") String memberId) throws Exception {
         return interviewService.getInterviewList(memberId);
