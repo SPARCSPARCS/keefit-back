@@ -1,7 +1,5 @@
 package com.backend.api.interview.controller;
 
-import com.backend.api.companyInterview.dto.CompanyInterviewDto;
-import com.backend.api.jobInterview.dto.JobInterviewDto;
 import com.backend.api.interview.entity.Interview;
 import org.springframework.web.bind.annotation.*;
 import com.backend.api.interview.service.InterviewService;
@@ -31,14 +29,4 @@ public class InterviewController {
             @PathVariable("member_id") String memberId) throws Exception {
         return interviewService.getInterviewList(memberId);
     }
-
-
-    // POST : 기업 적합 면접 결과 저장, 피드백 생성
-    @PostMapping("/interview2/{member_id}")
-    public String saveCompanyInterview(
-            @PathVariable("member_id") String memberId,
-            @RequestBody CompanyInterviewDto interviewDto) throws Exception {
-        return interviewService.companyInterviewFeedback(memberId, interviewDto);
-    }
-
 }

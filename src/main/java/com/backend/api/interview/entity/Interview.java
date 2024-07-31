@@ -42,7 +42,4 @@ public class Interview {
     @JoinColumn(name = "jobInterview_id")
     private JobInterview jobInterview;
 
-//    @OneToOne(mappedBy = "interview", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private JobInterview jobInterview;
-
 }
