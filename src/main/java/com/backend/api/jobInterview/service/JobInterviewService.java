@@ -72,7 +72,7 @@ public class JobInterviewService {
                 "면접자의 전체적인 답변을 제시된 평가 항목으로만 평가해. 그리고 출력은 각 평가 항목에 대하여 하나의 백분율 숫자값으로 표현하고, 배열의 요소로 출력해\n" +
                 "\n" +
                 "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
-        List<Integer> feedbackAndScores = clovaService.getJobInterviewScore(ratePrompt, interviewDto);
+        List<Integer> feedbackAndScores = clovaService.getJobInterviewScore(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
         String feedbackPrompt = "너는 채용담당자야.\n" +
                 "\n" +

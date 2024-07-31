@@ -257,12 +257,12 @@ public class ClovaService {
     }
 
     // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
-    public List<Integer> getJobInterviewScore(String prompt, JobInterviewDto interviewDto) {
+    public List<Integer> getJobInterviewScore(String prompt, List<String> questions, List<String> answers) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
 
-            String rateRequestBody = createRequestBody(prompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+            String rateRequestBody = createRequestBody(prompt, questions, answers);
 
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
             HttpResponse rateResponse = httpClient.execute(httpPost);

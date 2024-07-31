@@ -37,4 +37,6 @@ public class CompanyInterview {
 
     @ElementCollection
     private List<Integer> rate;
+
+    private Integer totalScore;
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MemberInfoController {
 
     private final MemberInfoService memberInfoService;

@@ -8,7 +8,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/interview")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class InterviewController {
     private final InterviewService interviewService;
 
