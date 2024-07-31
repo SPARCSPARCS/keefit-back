@@ -2,6 +2,7 @@ package com.backend.api.clova;
 
 import com.backend.api.interview.dto.InterviewDto;
 import com.backend.api.interview.dto.InterviewFeedback;
+import com.backend.api.interview.entity.Interview;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -97,6 +98,20 @@ public class ClovaService {
                 "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
     }
 
+    // 직무 적합 면접 평가 프롬프트
+    private String createJobPrompt(String standard) {
+        System.out.println("요청 보내기 위한 기준 " + standard);
+        return "너는 채용담당자야.\n" +
+                "면접자의 면접 질문과 면접 답변에 대한 전체적인 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 만점은 5점\n" +
+                "평가방법 : \n" +
+                "\n" +
+                "[평가 기준]\n" + standard +"\n" +
+                "\n" +
+                "면접자의 전체적인 답변을 제시된 평가 항목으로만 평가해. 그리고 출력은 각 평가 항목에 대하여 하나의 백분율 숫자값으로 표현하고, 배열의 요소로 출력해\n" +
+                "\n" +
+                "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
+    }
+
     // Clova API request body
     private String createRequestBody(String prompt, List<String> questions, List<String> answers) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -104,7 +119,6 @@ public class ClovaService {
         String answersJson = objectMapper.writeValueAsString(answers);
 
         // Ensure JSON content is properly escaped and formatted
-        // 요청 본문 형식 확인
         return "{\n" +
                 "  \"messages\" : [ {\n" +
                 "    \"role\" : \"system\",\n" +
@@ -112,6 +126,27 @@ public class ClovaService {
                 "  }, {\n" +
                 "    \"role\" : \"user\",\n" +
                 "    \"content\" : \"" + questionsJson.replace("\"", "\\\"") + "\\n\\n\\n" + answersJson.replace("\"", "\\\"") + "\"\n" +
+                "  } ],\n" +
+                "  \"topP\" : 0.8,\n" +
+                "  \"topK\" : 0,\n" +
+                "  \"maxTokens\" : 256,\n" +
+                "  \"temperature\" : 0.5,\n" +
+                "  \"repeatPenalty\" : 5.0,\n" +
+                "  \"stopBefore\" : [ ],\n" +
+                "  \"includeAiFilters\" : true,\n" +
+                "  \"seed\" : 0\n" +
+                "}";
+    }
+
+    // 직무 유사도 판별
+    public String createJobRequestBody(String prompt, String job) throws JsonProcessingException {
+        return "{\n" +
+                "  \"messages\" : [ {\n" +
+                "    \"role\" : \"system\",\n" +
+                "    \"content\" : \"" + prompt + "\"\n" +
+                "  }, {\n" +
+                "    \"role\" : \"user\",\n" +
+                "    \"content\" : \"" + job + "\"\n" +
                 "  } ],\n" +
                 "  \"topP\" : 0.8,\n" +
                 "  \"topK\" : 0,\n" +
@@ -188,22 +223,21 @@ public class ClovaService {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
 
-            // 피드백 및 면접 점수 request - Clova API
+            // 피드백 요청 - Clova API
             String feedbackPrompt = createFeedbackPrompt();
             String feedbackRequestBody = createRequestBody(feedbackPrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
+            // 면접 점수 요청 - Clova API
             String ratePrompt = createRatePrompt();
             String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
             // 피드백 요청 - Clova API
-            System.out.println("피드백 요청 : " + feedbackRequestBody);
             httpPost.setEntity(new StringEntity(feedbackRequestBody, ContentType.APPLICATION_JSON));
             HttpResponse feedbackResponse = httpClient.execute(httpPost);
             logContentType(feedbackResponse);
             String feedbackResponseBody = getResponseBody(feedbackResponse);
 
             // 점수 요청 - Clova API
-            System.out.println("점수 요청 : " + rateRequestBody);
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
             HttpResponse rateResponse = httpClient.execute(httpPost);
             logContentType(rateResponse);
@@ -211,13 +245,36 @@ public class ClovaService {
 
             // 응답에서 피드백, 점수 파싱
             List<String> feedbacks = parseFeedbackFromResponse(feedbackResponseBody);
-            System.out.println("이게 피드백!! " + feedbackResponseBody);
             List<Integer> scores = parseScoresFromResponse(rateResponseBody);
 
             return InterviewFeedback.builder()
                     .feedbacks(feedbacks)
                     .scores(scores)
                     .build();
+        } catch (Exception e) {
+            logger.error("Error getting interview feedback and score", e);
+            throw new RuntimeException("Error getting interview feedback and score", e);
+        }
+    }
+
+    // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
+    public List<Integer> getJobInterviewFeedback(InterviewDto interviewDto, String standard) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
+            setHeaders(httpPost);
+
+            // 면접 점수 요청 - Clova API
+            String ratePrompt = createJobPrompt(standard);
+            String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
+            HttpResponse rateResponse = httpClient.execute(httpPost);
+            logContentType(rateResponse);
+            String rateResponseBody = getResponseBody(rateResponse);
+            System.out.println("점수는 :  " + rateResponseBody);
+
+            // 응답에서 피드백, 점수 파싱
+            return parseScoresFromResponse(rateResponseBody);
         } catch (Exception e) {
             logger.error("Error getting interview feedback and score", e);
             throw new RuntimeException("Error getting interview feedback and score", e);

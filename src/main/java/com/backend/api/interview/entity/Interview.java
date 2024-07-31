@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -32,18 +33,34 @@ public class Interview {
 
     private String fileName;  // 자소서 파일명
 
+    // 면접 평가 기준
     @ElementCollection
-    @Column(length = 1000)  // 길이를 적절히 설정합니다
+    @MapKeyColumn(name = "type")
+    @Column(name = "standard")
+    @CollectionTable(name = "interview_standard")
+    private Map<String, String> standard;
+
+    // 직무 관련 면접 질문
+    @ElementCollection
+    @Column(length = 1000)  // 길이 설정
     private List<String> questions;
 
+    // 직무 면접 관련 답변
     @ElementCollection
-    @Column(length = 1000)  // 길이를 적절히 설정합니다
+    @Column(length = 1000)  // 길이 설정
     private List<String> answers;
 
+    // 직무 면접 피드백
     @ElementCollection
-    @Column(length = 1000)  // 길이를 적절히 설정합니다
+    @Column(length = 1000)  // 길이 설정
     private List<String> feedback;
 
+    // 면접 태도 평가
+    @ElementCollection
+    @Column(length = 1000)
+    private List<String> attitudeFeedback;
+
+    // TO-DO : 삭제 예정
     @ElementCollection
     private List<Integer> rate;
 }

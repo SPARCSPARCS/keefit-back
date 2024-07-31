@@ -19,10 +19,7 @@ public class MemberInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberInfoId;
 
-    private Integer type;
     private String name;
-    private String gender;
-    private String education; // 학력 정보
     private String major; // 전공 정보
 
     @OneToOne
