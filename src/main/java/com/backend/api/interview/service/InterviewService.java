@@ -1,7 +1,7 @@
 package com.backend.api.interview.service;
 
 import com.backend.api.clova.ClovaService;
-import com.backend.api.interview.dto.InterviewDto;
+import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.dto.InterviewFeedback;
 import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
@@ -21,7 +21,6 @@ import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @Transactional
@@ -54,7 +53,7 @@ public class InterviewService {
 
     // 면접  저장
     @Transactional
-    public String saveInterview(String memberId, InterviewDto interviewDto) throws Exception {
+    public String saveInterview(String memberId, InterviewRequest interviewDto) throws Exception {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
 
@@ -80,12 +79,12 @@ public class InterviewService {
 
     // 직무 면접 저장 + 피드백
     @Transactional
-    public String jobinterviewFeedback(String memberId, InterviewDto interviewDto, String job) throws Exception {
+    public String jobInterviewFeedback(String memberId, InterviewRequest interviewDto) throws Exception {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
 
         // 직무 적합 평가 기준 get - Clova
-        Map<String, String> standardsMap = getJobInterviewStandard(job);
+        Map<String, String> standardsMap = getJobInterviewStandard();
 
         // Map을 JSON 문자열로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -100,7 +99,7 @@ public class InterviewService {
             throw new Exception("JSON 변환 오류");
         }
 
-        List<Integer> feedbackAndScores = clovaService.getJobInterviewFeedback(interviewDto, cleanedJson);
+        List<Integer> feedbackAndScores = clovaService.getJobInterviewFeedback(interviewDto);
 
         // Interview 엔티티 생성
         Interview interview = Interview.builder()
@@ -119,22 +118,33 @@ public class InterviewService {
         return "interviewID : " + interview.getInterviewId() + " 저장 완료";
     }
 
-    public String getJobCode(String job) throws JsonProcessingException {
+    // 기업 적합 면접 저장 + 피드백
+    @Transactional
+    public String companyInterviewFeedback(String memberId, InterviewRequest interviewDto) throws Exception {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
 
-        String prompt = "입력되는 직무가 다음 중 어떤 것과 가장 유사한지 판별해줘. 다른 출력값 없이 해당 직무의 응답 코드만 반환해줘. \n" +
-                "(출력 예시 : 10000)\n" +
-                "\n" +
-                "직무 : 공학 기술직 (응답코드 : 104728)\n" +
-                "직무 : IT관련전문직 (응답코드 : 1093)\n" +
-                "직무 : 금융 및 경영 관련직 (응답코드 : 104741) \n" +
-                "직무 : 기획서비스직 (응답코드 : 104747) ";
+        List<Integer> feedbackAndScores = clovaService.getJobInterviewFeedback(interviewDto);
 
-        return clovaService.createJobRequestBody(prompt, job);
+        // Interview 엔티티 생성
+        Interview interview = Interview.builder()
+                .member(member)
+                .company(interviewDto.getCompanyName())
+                .createDate(new Date()) // 현재 날짜를 설정합니다.
+                .field(interviewDto.getField())
+                .questions(interviewDto.getQuestions())
+                .standard2(interviewDto.getStandards())
+                .answers(interviewDto.getAnswers())
+                .rate(feedbackAndScores) // 점수 리스트 설정
+                .build();
+
+        // Interview 저장
+        interviewRepository.save(interview);
+        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
     }
 
     // 직무 면접 평가 기준 생성 - API
-    public Map<String, String> getJobInterviewStandard(String job) throws JsonProcessingException {
-        String jobCode = getJobCode(job);
+    public Map<String, String> getJobInterviewStandard() throws JsonProcessingException {
         String apiKey = "be3e0eabeb88e39ad4b7b69afa8bde25"; // API 키를 적절히 설정하세요
         String apiUrl = String.format("https://www.career.go.kr/cnet/front/openapi/job.json?apiKey=%s&seq=%s", apiKey, 1093);
 

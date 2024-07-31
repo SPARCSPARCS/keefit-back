@@ -40,6 +40,8 @@ public class Interview {
     @CollectionTable(name = "interview_standard")
     private Map<String, String> standard;
 
+    private String standard2;
+
     // 직무 관련 면접 질문
     @ElementCollection
     @Column(length = 1000)  // 길이 설정
@@ -55,12 +57,12 @@ public class Interview {
     @Column(length = 1000)  // 길이 설정
     private List<String> feedback;
 
-    // 면접 태도 평가
+    // 직무 면접 태도 평가
     @ElementCollection
     @Column(length = 1000)
     private List<String> attitudeFeedback;
 
-    // TO-DO : 삭제 예정
+    // 직무 면접 평가 점수
     @ElementCollection
     private List<Integer> rate;
 }

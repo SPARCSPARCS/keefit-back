@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InterviewDto {
+public class CompanyInterviewDto {
     private Long interviewId;
 
     private String companyName;
@@ -20,6 +20,8 @@ public class InterviewDto {
     private Date createDate;
 
     private String field;
+
+    private List<String> newsInfo; // 질문 생성에 사용된 뉴스 정보
 
     private List<String> questions;
 

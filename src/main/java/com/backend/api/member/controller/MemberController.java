@@ -31,7 +31,6 @@ public class MemberController {
         return new ResponseEntity<>(memberService.login(request), HttpStatus.OK);
     }
 
-
     // 사용자 토큰 인증 - test
 //    @GetMapping("/user/get")
 //    public ResponseEntity<Member> getUser(@RequestHeader("Authorization") String authorizationHeader) {

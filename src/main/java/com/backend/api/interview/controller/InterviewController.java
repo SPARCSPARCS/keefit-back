@@ -1,17 +1,11 @@
 package com.backend.api.interview.controller;
 
-import com.backend.api.interview.dto.InterviewDto;
+import com.backend.api.interview.dto.CompanyInterviewDto;
+import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.entity.Interview;
 import org.springframework.web.bind.annotation.*;
 import com.backend.api.interview.service.InterviewService;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RestController
@@ -47,17 +41,24 @@ public class InterviewController {
     }
 
     // 직무 면접 결과 저장
-    @PostMapping("/interview/{member_id}/{job}")
+    @PostMapping("/interview/{member_id}")
     public String saveJobInterview(
             @PathVariable("member_id") String memberId,
-            @PathVariable("job") String job,
-            @RequestBody InterviewDto interviewDto) throws Exception {
-        return interviewService.jobinterviewFeedback(memberId, interviewDto, job);
+            @RequestBody InterviewRequest interviewDto) throws Exception {
+        return interviewService.jobInterviewFeedback(memberId, interviewDto);
     }
 
-//    // 직무 면접 조회
-//    @GetMapping("/jobInterview/{member_id}/{interview_id}")
-//    public Interview getJobInterviewDetail(
+    // 기업 적합 면접 결과 저장
+    @PostMapping("/interview2/{member_id}")
+    public String saveCompanyInterview(
+            @PathVariable("member_id") String memberId,
+            @RequestBody InterviewRequest interviewDto) throws Exception {
+        return interviewService.companyInterviewFeedback(memberId, interviewDto);
+    }
+
+    // 기업 면접 조회
+//    @GetMapping("/Interview2/{member_id}/{interview_id}")
+//    public CompanyInterviewDto getJobInterviewDetail(
 //            @PathVariable("member_id") String memberId,
 //            @PathVariable("interview_id") Long interviewId) throws Exception {
 //        return interviewService.getInterview(interviewId);

@@ -1,8 +1,7 @@
 package com.backend.api.clova;
 
-import com.backend.api.interview.dto.InterviewDto;
+import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.dto.InterviewFeedback;
-import com.backend.api.interview.entity.Interview;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -218,7 +217,7 @@ public class ClovaService {
     }
 
     // 인터뷰 피드백, 평가 점수 요청 - Clova API
-    public InterviewFeedback getInterviewFeedbackAndScore(InterviewDto interviewDto) {
+    public InterviewFeedback getInterviewFeedbackAndScore(InterviewRequest interviewDto) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
@@ -258,13 +257,13 @@ public class ClovaService {
     }
 
     // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
-    public List<Integer> getJobInterviewFeedback(InterviewDto interviewDto, String standard) {
+    public List<Integer> getJobInterviewFeedback(InterviewRequest interviewDto) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
 
             // 면접 점수 요청 - Clova API
-            String ratePrompt = createJobPrompt(standard);
+            String ratePrompt = createJobPrompt(interviewDto.getStandards().toString());
             String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
