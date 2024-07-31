@@ -166,33 +166,6 @@ public class ClovaService {
             logger.info("Content-Type: " + contentTypeHeader.getValue());
         }
     }
-
-    // Json에서 피드백 정보 추출
-    private List<String> parseFeedbackFromResponse(String responseBody) {
-        List<String> feedbacks = new ArrayList<>();
-        try {
-            JsonNode rootNode = objectMapper.readTree(responseBody);
-            JsonNode contentNode = rootNode.path("result").path("message").path("content");
-
-            if (contentNode.isTextual()) {
-                String content = contentNode.asText();
-                JsonNode feedbacksNode = objectMapper.readTree(content);
-
-                if (feedbacksNode.isArray()) {
-                    for (JsonNode feedbackNode : feedbacksNode) {
-                        if (feedbackNode.isTextual()) {
-                            feedbacks.add(feedbackNode.asText().trim());
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error extracting feedback from response", e);
-        }
-        return feedbacks;
-    }
-
-
     // Json에서 평가 점수 파싱
     private List<Integer> parseScoresFromResponse(String responseBody) {
         List<Integer> scores = new ArrayList<>();
@@ -216,6 +189,31 @@ public class ClovaService {
             logger.error("Error parsing scores from response", e);
         }
         return scores;
+    }
+
+    // Json에서 피드백 파싱
+    private List<String> parseFeedbackFromResponse(String responseBody) {
+        List<String> feedback = new ArrayList<>();
+        try {
+            JsonNode rootNode = objectMapper.readTree(responseBody);
+            JsonNode contentNode = rootNode.path("result").path("message").path("content");
+
+            if (contentNode.isTextual()) {
+                String content = contentNode.asText();
+                JsonNode scoresNode = objectMapper.readTree(content);
+
+                if (scoresNode.isArray()) {
+                    for (JsonNode scoreNode : scoresNode) {
+                        if (scoreNode.isInt()) {
+                            feedback.add(String.valueOf(scoreNode.asInt()));
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error parsing scores from response", e);
+        }
+        return feedback;
     }
 
     // 인터뷰 피드백, 평가 점수 요청 - Clova API
@@ -259,7 +257,7 @@ public class ClovaService {
     }
 
     // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
-    public List<Integer> getJobInterviewFeedback(String prompt, JobInterviewDto interviewDto) {
+    public List<Integer> getJobInterviewScore(String prompt, JobInterviewDto interviewDto) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
@@ -275,6 +273,27 @@ public class ClovaService {
 
             // 응답에서 피드백, 점수 파싱
             return parseScoresFromResponse(rateResponseBody);
+        } catch (Exception e) {
+            logger.error("Error getting interview feedback and score", e);
+            throw new RuntimeException("Error getting interview feedback and score", e);
+        }
+    }
+    public List<String> getJobInterviewFeedback(String prompt, JobInterviewDto interviewDto) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
+            setHeaders(httpPost);
+
+
+            String rateRequestBody = createRequestBody(prompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
+            HttpResponse rateResponse = httpClient.execute(httpPost);
+            logContentType(rateResponse);
+            String rateResponseBody = getResponseBody(rateResponse);
+            System.out.println("점수는 :  " + rateResponseBody);
+
+            // 응답에서 피드백, 점수 파싱
+            return parseFeedbackFromResponse(rateResponseBody);
         } catch (Exception e) {
             logger.error("Error getting interview feedback and score", e);
             throw new RuntimeException("Error getting interview feedback and score", e);

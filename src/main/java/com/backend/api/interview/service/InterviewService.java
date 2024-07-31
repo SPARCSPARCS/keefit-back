@@ -4,9 +4,13 @@ import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
 import com.backend.api.member.entity.Member;
 import com.backend.api.member.repository.MemberRepository;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
@@ -34,4 +38,5 @@ public class InterviewService {
         return interviewRepository.findByInterviewId(interviewId)
                 .orElseThrow(() -> new Exception("면접 정보를 찾을 수 없습니다."));
     }
+
 }

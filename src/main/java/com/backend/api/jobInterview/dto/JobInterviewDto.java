@@ -29,5 +29,9 @@ public class JobInterviewDto {
 
     private List<String> feedback; // 면접 피드백
 
-    private List<Integer> rate;
+    private Integer attitudeScore;
+
+    private List<Integer> jobFitScore;
+
+    private Integer totalScore;
 }

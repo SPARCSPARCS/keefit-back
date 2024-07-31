@@ -62,7 +62,7 @@ public class JobInterviewService {
 
         // 면접 점수 요청 - Clova API
         String ratePrompt = "너는 채용담당자야.\n" +
-                "면접자의 면접 질문과 면접 답변에 대한 전체적인 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 만점은 5점\n" +
+                "면접자의 모든 면접 질문과 면접 답변에 대해 엄격한 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 출력해야하는 점수는 5점 만점이고, 엄격하게 평가해\n" +
                 "평가방법 : \n" +
                 "\n" +
                 "[평가 기준]\n" + cleanedJson +"\n" +
@@ -70,14 +70,30 @@ public class JobInterviewService {
                 "면접자의 전체적인 답변을 제시된 평가 항목으로만 평가해. 그리고 출력은 각 평가 항목에 대하여 하나의 백분율 숫자값으로 표현하고, 배열의 요소로 출력해\n" +
                 "\n" +
                 "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
-        List<Integer> feedbackAndScores = clovaService.getJobInterviewFeedback(ratePrompt, interviewDto);
+        List<Integer> feedbackAndScores = clovaService.getJobInterviewScore(ratePrompt, interviewDto);
+
+        String feedbackPrompt = "너는 채용담당자야.\n" +
+                "\n" +
+                "면접자의 전체적인 면접 질문과 면접 답변에 대해 엄격하고 상세한 평가를 존댓말로 내려주세요. 좋은 점을 하나의 문자열로, 개선할 점을 하나의 문자열로 하는 하나의 배열을 출력해주세요. \n" +
+                "\n" +
+                "[, ] \n";
+
+
+//        List<String> feedback = clovaService.getJobInterviewFeedback(feedbackPrompt, interviewDto);
+
+        Integer totalScore = (feedbackAndScores.stream()
+                .mapToInt(Integer::intValue)
+                .sum() + interviewDto.getAttitudeScore()) / 3 * 20;
 
         // Create and save JobInterview entity
         JobInterview jobInterview = JobInterview.builder()
                 .questions(interviewDto.getQuestions())
                 .answers(interviewDto.getAnswers())
                 .standard(standard)
-                .rate(feedbackAndScores)
+                .attitudeScore(interviewDto.getAttitudeScore())
+                .score(feedbackAndScores)
+                .totalScore(totalScore)
+//                .feedback(feedback)
                 .build();
 
 
@@ -94,9 +110,18 @@ public class JobInterviewService {
         // Save Interview entity
         interviewRepository.save(interview);
 
-        // Interview 저장
-        interviewRepository.save(interview);
-        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
+        // Create a response map with interviewId and jobInterviewId
+        Map<String, Long> response = new HashMap<>();
+        response.put("interviewID", interview.getInterviewId());
+        response.put("jobInterviewId", savedJobInterview.getJobInterviewId());
+
+        // Convert the response map to a JSON string
+        try {
+            return objectMapper.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new Exception("Response JSON 변환 오류");
+        }
     }
 
     // 직무 면접 평가 기준 생성 - API
@@ -160,5 +185,12 @@ public class JobInterviewService {
             e.printStackTrace();
             return new HashMap<>(); // 빈 맵 반환
         }
+    }
+
+    // 면접 상세 조회
+    @Transactional
+    public JobInterview getInterview(Long interviewId) throws Exception {
+        return jobInterviewRepository.findByJobInterviewId(interviewId)
+                .orElseThrow(() -> new Exception("면접 정보를 찾을 수 없습니다."));
     }
 }

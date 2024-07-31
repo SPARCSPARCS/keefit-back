@@ -1,7 +1,5 @@
 package com.backend.api.jobInterview.entity;
 
-import com.backend.api.member.entity.Member;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,9 +35,10 @@ public class JobInterview {
     @ElementCollection
     private List<String> feedback;
 
-    @ElementCollection
-    private List<String> attitudeFeedback;
+    private Integer attitudeScore;
 
     @ElementCollection
-    private List<Integer> rate;
+    private List<Integer> score;
+
+    private Integer totalScore; // 백분율로 표현
 }
