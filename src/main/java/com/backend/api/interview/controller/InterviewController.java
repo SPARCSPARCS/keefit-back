@@ -23,13 +23,13 @@ public class InterviewController {
         this.interviewService = interviewService;
     }
 
-    // 직무 면접 결과 저장
-    @PostMapping("/interview/{member_id}")
-    public String saveInterview(
-            @PathVariable("member_id") String memberId,
-            @RequestBody InterviewDto interviewDto) throws Exception {
-        return interviewService.saveInterview(memberId, interviewDto);
-    }
+//    // 직무 면접 결과 저장
+//    @PostMapping("/interview/{member_id}")
+//    public String saveInterview(
+//            @PathVariable("member_id") String memberId,
+//            @RequestBody InterviewDto interviewDto) throws Exception {
+//        return interviewService.saveInterview(memberId, interviewDto);
+//    }
 
     // 면접 상세 조회
     @GetMapping("/interview/{member_id}/{interview_id}")
@@ -47,7 +47,7 @@ public class InterviewController {
     }
 
     // 직무 면접 결과 저장
-    @PostMapping("/jobInterview/{member_id}/{job}")
+    @PostMapping("/interview/{member_id}/{job}")
     public String saveJobInterview(
             @PathVariable("member_id") String memberId,
             @PathVariable("job") String job,
@@ -55,11 +55,11 @@ public class InterviewController {
         return interviewService.jobinterviewFeedback(memberId, interviewDto, job);
     }
 
-    // 직무 면접 조회
-    @GetMapping("/jobInterview/{member_id}/{interview_id}")
-    public Interview getJobInterviewDetail(
-            @PathVariable("member_id") String memberId,
-            @PathVariable("interview_id") Long interviewId) throws Exception {
-        return interviewService.getInterview(interviewId);
-    }
+//    // 직무 면접 조회
+//    @GetMapping("/jobInterview/{member_id}/{interview_id}")
+//    public Interview getJobInterviewDetail(
+//            @PathVariable("member_id") String memberId,
+//            @PathVariable("interview_id") Long interviewId) throws Exception {
+//        return interviewService.getInterview(interviewId);
+//    }
 }

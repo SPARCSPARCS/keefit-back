@@ -63,6 +63,7 @@ public class InterviewService {
 
         // Interview 엔티티 생성
         Interview interview = Interview.builder()
+                .member(member)
                 .company(interviewDto.getCompanyName())
                 .createDate(new Date()) // 현재 날짜를 설정합니다.
                 .field(interviewDto.getField())
@@ -103,6 +104,7 @@ public class InterviewService {
 
         // Interview 엔티티 생성
         Interview interview = Interview.builder()
+                .member(member)
                 .company(interviewDto.getCompanyName())
                 .createDate(new Date()) // 현재 날짜를 설정합니다.
                 .field(interviewDto.getField())
@@ -114,7 +116,7 @@ public class InterviewService {
 
         // Interview 저장
         interviewRepository.save(interview);
-        return "저장 완료";
+        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
     }
 
     public String getJobCode(String job) throws JsonProcessingException {
