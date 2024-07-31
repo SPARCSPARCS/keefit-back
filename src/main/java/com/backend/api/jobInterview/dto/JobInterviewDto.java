@@ -1,4 +1,4 @@
-package com.backend.api.companyInterview.dto;
+package com.backend.api.jobInterview.dto;
 
 import lombok.*;
 

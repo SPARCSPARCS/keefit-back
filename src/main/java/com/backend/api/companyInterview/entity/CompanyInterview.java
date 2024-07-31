@@ -1,4 +1,4 @@
-package com.backend.api.jobInterview.entity;
+package com.backend.api.companyInterview.entity;
 
 import com.backend.api.interview.entity.Interview;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 public class CompanyInterview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long companyInterviewId;
 
     @OneToOne
     @JoinColumn(name = "interview_id")

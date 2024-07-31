@@ -1,13 +1,13 @@
 package com.backend.api.interview.service;
 
 import com.backend.api.clova.ClovaService;
-import com.backend.api.companyInterview.repository.JobInterviewRepository;
+import com.backend.api.jobInterview.repository.JobInterviewRepository;
 import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.dto.InterviewFeedback;
-import com.backend.api.jobInterview.dto.CompanyInterviewDto;
-import com.backend.api.companyInterview.dto.JobInterviewDto;
+import com.backend.api.companyInterview.dto.CompanyInterviewDto;
+import com.backend.api.jobInterview.dto.JobInterviewDto;
 import com.backend.api.interview.entity.Interview;
-import com.backend.api.companyInterview.entity.JobInterview;
+import com.backend.api.jobInterview.entity.JobInterview;
 import com.backend.api.interview.repository.InterviewRepository;
 import com.backend.api.member.entity.Member;
 import com.backend.api.member.repository.MemberRepository;
@@ -33,7 +33,6 @@ public class InterviewService {
 
     private final MemberRepository memberRepository;
     private final InterviewRepository interviewRepository;
-    private final JobInterviewRepository jobInterviewRepository;
     private final ClovaService clovaService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -56,86 +55,6 @@ public class InterviewService {
                 .orElseThrow(() -> new Exception("면접 정보를 찾을 수 없습니다."));
     }
 
-    // 면접  저장
-    @Transactional
-    public String saveInterview(String memberId, InterviewRequest interviewDto) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
-
-        // ClovaService에서 피드백과 점수를 가져옵니다.
-        InterviewFeedback feedbackAndScores = clovaService.getInterviewFeedbackAndScore(interviewDto);
-
-        // Interview 엔티티 생성
-        Interview interview = Interview.builder()
-                .member(member)
-                .company(interviewDto.getCompanyName())
-                .createDate(new Date()) // 현재 날짜를 설정합니다.
-                .field(interviewDto.getField())
-                .build();
-
-        // Interview 저장
-        interviewRepository.save(interview);
-        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
-    }
-
-    // 직무 면접 저장 + 피드백
-    @Transactional
-    public String jobInterviewFeedback(String memberId, JobInterviewDto interviewDto) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
-
-        Map<String, String> standard = getJobInterviewStandard();
-
-        // Map을 JSON 문자열로 변환
-        ObjectMapper objectMapper = new ObjectMapper();
-        String standardsJson;
-        String cleanedJson;
-        try {
-            standardsJson = objectMapper.writeValueAsString(interviewDto.getStandards());
-            // JSON 문자열에서 큰따옴표 제거
-            cleanedJson = standard.replace("\"", "");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new Exception("JSON 변환 오류");
-        }
-
-        // 면접 점수 요청 - Clova API
-        String ratePrompt = "너는 채용담당자야.\n" +
-                "면접자의 면접 질문과 면접 답변에 대한 전체적인 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 만점은 5점\n" +
-                "평가방법 : \n" +
-                "\n" +
-                "[평가 기준]\n" + cleanedJson +"\n" +
-                "\n" +
-                "면접자의 전체적인 답변을 제시된 평가 항목으로만 평가해. 그리고 출력은 각 평가 항목에 대하여 하나의 백분율 숫자값으로 표현하고, 배열의 요소로 출력해\n" +
-                "\n" +
-                "출력 예시 : [1,2,3,4,5] 와 같은 하나의 배열만 출력";
-        List<Integer> feedbackAndScores = clovaService.getJobInterviewFeedback(ratePrompt, interviewDto);
-
-        // Create and save JobInterview entity
-        JobInterview jobInterview = JobInterview.builder()
-                .questions(interviewDto.getQuestions())
-                .answers(interviewDto.getAnswers())
-                .build();
-
-
-        JobInterview savedJobInterview = jobInterviewRepository.save(jobInterview);
-
-        Interview interview = Interview.builder()
-                .member(member)
-                .company(interviewDto.getCompanyName())
-                .jobInterview(savedJobInterview)
-                .createDate(new Date()) // 현재 날짜를 설정합니다.
-                .field(interviewDto.getField())
-                .build();
-
-        // Save Interview entity
-        interviewRepository.save(interview);
-
-        // Interview 저장
-        interviewRepository.save(interview);
-        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
-    }
-
     // 기업 적합 면접 저장 + 피드백
     @Transactional
     public String companyInterviewFeedback(String memberId, CompanyInterviewDto interviewDto) throws Exception {
@@ -147,7 +66,7 @@ public class InterviewService {
         // Interview 엔티티 생성
         Interview interview = Interview.builder()
                 .member(member)
-                .company(interviewDto.getCompany())
+                .company(interviewDto.getCompanyName())
                 .createDate(new Date()) // 현재 날짜를 설정합니다.
                 .field(interviewDto.getField())
                 .build();

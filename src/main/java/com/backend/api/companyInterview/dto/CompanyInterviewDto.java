@@ -1,4 +1,4 @@
-package com.backend.api.jobInterview.dto;
+package com.backend.api.companyInterview.dto;
 
 import lombok.*;
 
@@ -17,11 +17,11 @@ public class CompanyInterviewDto {
 
     private String  field;
 
-    private String Company;
+    private String companyName;
 
     private Date createdTime; // 직무 + 기업 적합 면접 공통 정보
 
-    private String newsInfo; // 질문 생성에 사용된 뉴스 정보
+    private String standard; // 질문 생성에 사용된 뉴스 정보
 
     private List<String> questions;
 

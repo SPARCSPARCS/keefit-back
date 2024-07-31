@@ -1,4 +1,4 @@
-package com.backend.api.companyInterview.entity;
+package com.backend.api.jobInterview.entity;
 
 import com.backend.api.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -18,11 +18,6 @@ public class JobInterview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobInterviewId;
-
-    @OneToOne
-    @JoinColumn(name = "member_id")
-    @JsonManagedReference
-    private Member member;
 
     // 직무 적합 평가 기준
     @ElementCollection

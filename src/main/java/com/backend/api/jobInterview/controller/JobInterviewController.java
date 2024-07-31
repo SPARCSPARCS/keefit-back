@@ -1,11 +1,11 @@
-package com.backend.api.companyInterview.controller;
+package com.backend.api.jobInterview.controller;
 
-import com.backend.api.companyInterview.dto.JobInterviewDto;
-import com.backend.api.companyInterview.service.JobInterviewService;
+import com.backend.api.jobInterview.dto.JobInterviewDto;
+import com.backend.api.jobInterview.service.JobInterviewService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/jobInterview")
+@RequestMapping("/interview")
 public class JobInterviewController {
 
     private final JobInterviewService jobInterviewService;

@@ -1,7 +1,7 @@
 package com.backend.api.interview.dto;
 
-import com.backend.api.jobInterview.dto.CompanyInterviewDto;
-import com.backend.api.companyInterview.dto.JobInterviewDto;
+import com.backend.api.companyInterview.dto.CompanyInterviewDto;
+import com.backend.api.jobInterview.dto.JobInterviewDto;
 import lombok.*;
 
 import java.util.Date;

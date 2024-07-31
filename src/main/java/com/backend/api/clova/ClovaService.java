@@ -2,8 +2,8 @@ package com.backend.api.clova;
 
 import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.dto.InterviewFeedback;
-import com.backend.api.jobInterview.dto.CompanyInterviewDto;
-import com.backend.api.companyInterview.dto.JobInterviewDto;
+import com.backend.api.companyInterview.dto.CompanyInterviewDto;
+import com.backend.api.jobInterview.dto.JobInterviewDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -288,7 +288,7 @@ public class ClovaService {
             setHeaders(httpPost);
 
             // 면접 점수 요청 - Clova API
-            String ratePrompt = createJobPrompt(interviewDto.getNewsInfo());
+            String ratePrompt = createJobPrompt(interviewDto.getStandard());
             String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));

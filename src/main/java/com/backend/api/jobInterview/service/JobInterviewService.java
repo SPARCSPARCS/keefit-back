@@ -1,9 +1,9 @@
-package com.backend.api.companyInterview.service;
+package com.backend.api.jobInterview.service;
 
 import com.backend.api.clova.ClovaService;
-import com.backend.api.companyInterview.dto.JobInterviewDto;
-import com.backend.api.companyInterview.entity.JobInterview;
-import com.backend.api.companyInterview.repository.JobInterviewRepository;
+import com.backend.api.jobInterview.dto.JobInterviewDto;
+import com.backend.api.jobInterview.entity.JobInterview;
+import com.backend.api.jobInterview.repository.JobInterviewRepository;
 import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
 import com.backend.api.member.entity.Member;

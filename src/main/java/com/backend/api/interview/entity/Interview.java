@@ -1,15 +1,13 @@
 package com.backend.api.interview.entity;
 
-import com.backend.api.companyInterview.entity.JobInterview;
-import com.backend.api.jobInterview.entity.CompanyInterview;
+import com.backend.api.jobInterview.entity.JobInterview;
+import com.backend.api.companyInterview.entity.CompanyInterview;
 import com.backend.api.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @Getter
@@ -35,7 +33,8 @@ public class Interview {
     private String field; // 직무
 
     // 회사 면접
-    @OneToOne(mappedBy = "interview", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(name = "companyInterview_id")
     private CompanyInterview companyInterview;
 
     // 직무 면접
