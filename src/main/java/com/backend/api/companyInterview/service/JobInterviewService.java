@@ -1,82 +1,43 @@
-package com.backend.api.interview.service;
+package com.backend.api.companyInterview.service;
 
 import com.backend.api.clova.ClovaService;
-import com.backend.api.companyInterview.repository.JobInterviewRepository;
-import com.backend.api.interview.dto.InterviewRequest;
-import com.backend.api.interview.dto.InterviewFeedback;
-import com.backend.api.jobInterview.dto.CompanyInterviewDto;
 import com.backend.api.companyInterview.dto.JobInterviewDto;
-import com.backend.api.interview.entity.Interview;
 import com.backend.api.companyInterview.entity.JobInterview;
+import com.backend.api.companyInterview.repository.JobInterviewRepository;
+import com.backend.api.interview.entity.Interview;
 import com.backend.api.interview.repository.InterviewRepository;
 import com.backend.api.member.entity.Member;
 import com.backend.api.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class InterviewService {
+public class JobInterviewService {
 
     private final MemberRepository memberRepository;
-    private final InterviewRepository interviewRepository;
     private final JobInterviewRepository jobInterviewRepository;
+    private final InterviewRepository interviewRepository;
     private final ClovaService clovaService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private RestTemplate restTemplate;
-
-    // 면접 목록 조회
-    @Transactional
-    public List<Interview> getInterviewList(String memberId) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
-
-        return interviewRepository.findByMember(member);
-    }
-
-    // 면접 상세 조회
-    @Transactional
-    public Interview getInterview(Long interviewId) throws Exception {
-        return interviewRepository.findByInterviewId(interviewId)
-                .orElseThrow(() -> new Exception("면접 정보를 찾을 수 없습니다."));
-    }
-
-    // 면접  저장
-    @Transactional
-    public String saveInterview(String memberId, InterviewRequest interviewDto) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
-
-        // ClovaService에서 피드백과 점수를 가져옵니다.
-        InterviewFeedback feedbackAndScores = clovaService.getInterviewFeedbackAndScore(interviewDto);
-
-        // Interview 엔티티 생성
-        Interview interview = Interview.builder()
-                .member(member)
-                .company(interviewDto.getCompanyName())
-                .createDate(new Date()) // 현재 날짜를 설정합니다.
-                .field(interviewDto.getField())
-                .build();
-
-        // Interview 저장
-        interviewRepository.save(interview);
-        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
-    }
 
     // 직무 면접 저장 + 피드백
     @Transactional
@@ -115,6 +76,8 @@ public class InterviewService {
         JobInterview jobInterview = JobInterview.builder()
                 .questions(interviewDto.getQuestions())
                 .answers(interviewDto.getAnswers())
+                .standard(standard)
+                .rate(feedbackAndScores)
                 .build();
 
 
@@ -130,27 +93,6 @@ public class InterviewService {
 
         // Save Interview entity
         interviewRepository.save(interview);
-
-        // Interview 저장
-        interviewRepository.save(interview);
-        return "interviewID : " + interview.getInterviewId() + " 저장 완료";
-    }
-
-    // 기업 적합 면접 저장 + 피드백
-    @Transactional
-    public String companyInterviewFeedback(String memberId, CompanyInterviewDto interviewDto) throws Exception {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
-
-        List<Integer> feedbackAndScores = clovaService.getCompanyInterviewFeedback(interviewDto);
-
-        // Interview 엔티티 생성
-        Interview interview = Interview.builder()
-                .member(member)
-                .company(interviewDto.getCompany())
-                .createDate(new Date()) // 현재 날짜를 설정합니다.
-                .field(interviewDto.getField())
-                .build();
 
         // Interview 저장
         interviewRepository.save(interview);
@@ -187,7 +129,7 @@ public class InterviewService {
                     performStringBuilder.append(node.path("perform").asText());
                 }
                 String performCombined = performStringBuilder.toString();
-                System.out.println("업무 : " + performCombined);
+                System.out.println("여기 업무 : " + performCombined);
 
                 // knowledge 리스트 추출 및 결합
                 JsonNode knowledgeListNode = jsonNode.path("performList").path("knowledge");

@@ -2,6 +2,8 @@ package com.backend.api.clova;
 
 import com.backend.api.interview.dto.InterviewRequest;
 import com.backend.api.interview.dto.InterviewFeedback;
+import com.backend.api.jobInterview.dto.CompanyInterviewDto;
+import com.backend.api.companyInterview.dto.JobInterviewDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -257,13 +259,36 @@ public class ClovaService {
     }
 
     // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
-    public List<Integer> getJobInterviewFeedback(InterviewRequest interviewDto) {
+    public List<Integer> getJobInterviewFeedback(String prompt, JobInterviewDto interviewDto) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
+            setHeaders(httpPost);
+
+
+            String rateRequestBody = createRequestBody(prompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+            httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));
+            HttpResponse rateResponse = httpClient.execute(httpPost);
+            logContentType(rateResponse);
+            String rateResponseBody = getResponseBody(rateResponse);
+            System.out.println("점수는 :  " + rateResponseBody);
+
+            // 응답에서 피드백, 점수 파싱
+            return parseScoresFromResponse(rateResponseBody);
+        } catch (Exception e) {
+            logger.error("Error getting interview feedback and score", e);
+            throw new RuntimeException("Error getting interview feedback and score", e);
+        }
+    }
+
+    // 직무 적합 인터뷰 피드백, 평가 점수 요청 - Clova API
+    public List<Integer> getCompanyInterviewFeedback(CompanyInterviewDto interviewDto) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(CLOVA_STUDIO_API_URL_TEMPLATE);
             setHeaders(httpPost);
 
             // 면접 점수 요청 - Clova API
-            String ratePrompt = createJobPrompt(interviewDto.getStandards().toString());
+            String ratePrompt = createJobPrompt(interviewDto.getNewsInfo());
             String rateRequestBody = createRequestBody(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
 
             httpPost.setEntity(new StringEntity(rateRequestBody, ContentType.APPLICATION_JSON));

@@ -1,17 +1,20 @@
-package com.backend.api.interview.dto;
+package com.backend.api.companyInterview.dto;
 
 import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyInterviewDto {
-    private Long interviewId;
+public class JobInterviewResponse {
+    private Long interviewId; // 전체 인터뷰 식별자
+
+    private Long jobInterviewId; // 직무 인터뷰 식별자
 
     private String companyName;
 
@@ -21,7 +24,7 @@ public class CompanyInterviewDto {
 
     private String field;
 
-    private List<String> newsInfo; // 질문 생성에 사용된 뉴스 정보
+    private String standards; // List로 변경
 
     private List<String> questions;
 
