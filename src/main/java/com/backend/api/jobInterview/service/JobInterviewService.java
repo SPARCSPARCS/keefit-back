@@ -83,9 +83,9 @@ public class JobInterviewService {
 
 //        List<String> feedback = clovaService.getJobInterviewFeedback(feedbackPrompt, interviewDto);
 
-        Integer totalScore = (feedbackAndScores.stream()
+        Integer totalScore = ((feedbackAndScores.stream()
                 .mapToInt(Integer::intValue)
-                .sum() + interviewDto.getAttitudeScore()) / 3 * 20;
+                .sum() + interviewDto.getAttitudeScore()) / 3 ) * 20;
 
         // Create and save JobInterview entity
         JobInterview jobInterview = JobInterview.builder()

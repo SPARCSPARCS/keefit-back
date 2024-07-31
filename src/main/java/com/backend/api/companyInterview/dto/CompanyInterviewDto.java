@@ -29,5 +29,7 @@ public class CompanyInterviewDto {
 
     private List<String> feedback; // 면접 피드백
 
+    private Integer attitudeScore;
+
     private List<Integer> rate;
 }

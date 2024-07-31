@@ -19,4 +19,6 @@ public class CompanyInterviewFeedback {
     private List<Integer> scores;
 
     private String standards; // List로 변경
+
+    private Integer attitudeScore;
 }

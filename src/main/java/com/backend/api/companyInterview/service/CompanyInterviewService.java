@@ -32,7 +32,7 @@ public class CompanyInterviewService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new Exception("Member를 찾을 수 없습니다."));
 
-        List<Integer> feedbackAndScores = clovaService.getCompanyInterviewFeedback(interviewDto);
+//        List<Integer> feedbackAndScores = clovaService.getCompanyInterviewFeedback(interviewDto);
 
         // 면접 점수 요청 - Clova API
         String ratePrompt = "너는 채용담당자야.\n" +
@@ -47,14 +47,21 @@ public class CompanyInterviewService {
                 "하나의 배열을 숫자 형식으로 출력해. 평가에 대한 부가적인 설명은 필요 없어.\n" +
                 "[논리성에 대한 점수, 내용이해에 대한 점수]";
 
-        clovaService.getJobInterviewScore(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+        List<Integer> feedbackAndScores = clovaService.getJobInterviewScore(ratePrompt, interviewDto.getQuestions(), interviewDto.getAnswers());
+
+        System.out.println("태도 점수는 : " + interviewDto.getAttitudeScore());
+        Integer totalScore = ((feedbackAndScores.stream()
+                .mapToInt(Integer::intValue)
+                .sum() + interviewDto.getAttitudeScore()) / 3 ) * 20;
 
         // Create and save CompanyInterview entity
         CompanyInterview companyInterview = CompanyInterview.builder()
                 .questions(interviewDto.getQuestions())
                 .answers(interviewDto.getAnswers())
                 .standards(interviewDto.getStandard())
+                .totalScore(totalScore)
                 .rate(feedbackAndScores)
+                .attitudeScore(interviewDto.getAttitudeScore())
                 .build();
 
         CompanyInterview savedCompanyInterview = companyInterviewRepository.save(companyInterview);

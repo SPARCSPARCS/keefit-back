@@ -32,8 +32,7 @@ public class CompanyInterview {
     @ElementCollection
     private List<String> feedback;
 
-    @ElementCollection
-    private List<String> attitudeFeedback;
+    private Integer attitudeScore;
 
     @ElementCollection
     private List<Integer> rate;
