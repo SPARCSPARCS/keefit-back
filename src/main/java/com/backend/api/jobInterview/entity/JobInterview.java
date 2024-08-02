@@ -3,6 +3,7 @@ package com.backend.api.jobInterview.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,8 @@ public class JobInterview {
     private Integer attitudeScore;
 
     @ElementCollection
-    private List<Integer> score;
+    @Column(name = "score")
+    private List<Integer> scores = new ArrayList<>(List.of(0, 0));
 
     private Integer totalScore; // 백분율로 표현
 }

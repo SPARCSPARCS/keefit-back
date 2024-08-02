@@ -173,14 +173,20 @@ public class ClovaService {
             JsonNode rootNode = objectMapper.readTree(responseBody);
             JsonNode contentNode = rootNode.path("result").path("message").path("content");
 
+            // Split the content by new line to get each score
             if (contentNode.isTextual()) {
                 String content = contentNode.asText();
-                JsonNode scoresNode = objectMapper.readTree(content);
+                String[] lines = content.split("\n");
 
-                if (scoresNode.isArray()) {
-                    for (JsonNode scoreNode : scoresNode) {
-                        if (scoreNode.isInt()) {
-                            scores.add(scoreNode.asInt());
+                for (String line : lines) {
+                    // Extract scores from the format "perform : 2\nknowledge : 1"
+                    String[] parts = line.split(":");
+                    if (parts.length == 2) {
+                        try {
+                            int score = Integer.parseInt(parts[1].trim());
+                            scores.add(score);
+                        } catch (NumberFormatException e) {
+                            logger.warn("Failed to parse score from line: " + line);
                         }
                     }
                 }

@@ -4,6 +4,7 @@ import com.backend.api.interview.entity.Interview;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,7 @@ public class CompanyInterview {
     private Integer attitudeScore;
 
     @ElementCollection
-    private List<Integer> rate;
+    private List<Integer> rate = new ArrayList<>(List.of(0, 0) );
 
     private Integer totalScore;
 }

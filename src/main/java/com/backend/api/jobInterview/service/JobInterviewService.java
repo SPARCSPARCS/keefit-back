@@ -64,7 +64,7 @@ public class JobInterviewService {
 
         // 면접 점수 요청 - Clova API
         String ratePrompt = "너는 채용담당자야.\n" +
-                "면접자의 모든 면접 질문과 면접 답변에 대해 엄격한 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 출력해야하는 점수는 5점 만점이고, 엄격하게 평가해\n" +
+                "면접자의 모든 면접 질문과 면접 답변에 대해 엄격한 평가를 내려줘. perform과 knowledge 평가 항목을 보고 전체 답변에 대한 평가를 내려줘. 출력은 perform에 대한 점수, knowledge에 대한 점수를 각각 하나의 배열의 요소로 하여, 출력. 출력해야하는 점수는 3점 만점이고, 아주 엄격하게 평가해\n" +
                 "평가방법 : \n" +
                 "\n" +
                 "[평가 기준]\n" + cleanedJson +"\n" +
@@ -93,7 +93,7 @@ public class JobInterviewService {
                 .answers(interviewDto.getAnswers())
                 .standard(standard)
                 .attitudeScore(interviewDto.getAttitudeScore())
-                .score(feedbackAndScores)
+                .scores(feedbackAndScores)
                 .totalScore(totalScore)
 //                .feedback(feedback)
                 .build();

@@ -16,22 +16,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final HandlerInterceptor authInterceptor;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*", "http://localhost:5173")
-//                .allowedOrigins("http://localhost:8080")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", HttpMethod.OPTIONS.name())
-                .allowedHeaders("*")
-                .maxAge(3600);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("*", "http://localhost:5173")
+////                .allowedOrigins("http://localhost:8080")
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", HttpMethod.OPTIONS.name())
+//                .allowedHeaders("*")
+//                .maxAge(3600);
+//    }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns();
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(authInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns();
+//    }
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
