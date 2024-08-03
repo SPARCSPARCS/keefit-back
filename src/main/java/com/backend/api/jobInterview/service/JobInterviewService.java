@@ -35,7 +35,7 @@ public class JobInterviewService {
     private final JobInterviewRepository jobInterviewRepository;
     private final InterviewRepository interviewRepository;
     private final ClovaService clovaService;
-    private final InterviewService interviewService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -97,7 +97,6 @@ public class JobInterviewService {
                 .totalScore(totalScore)
 //                .feedback(feedback)
                 .build();
-
 
         JobInterview savedJobInterview = jobInterviewRepository.save(jobInterview);
 
