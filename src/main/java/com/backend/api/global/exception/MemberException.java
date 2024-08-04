@@ -20,22 +20,4 @@ public class MemberException extends RuntimeException {
             super(message);
         }
     }
-
-    public static class EmailDuplicatedException extends MemberException {
-        public EmailDuplicatedException(String message) {
-            super(message);
-        }
-    }
-
-    public static class AsDescInputException extends MemberException {
-        public AsDescInputException(String message) {
-            super(message);
-        }
-    }
-
-    public static class AsPriceInputException extends MemberException {
-        public AsPriceInputException(String message) {
-            super(message);
-        }
-    }
 }

@@ -1,4 +1,4 @@
-package com.backend.api.MemberInfo.entity;
+package com.backend.api.memberInfo.entity;
 
 import com.backend.api.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
